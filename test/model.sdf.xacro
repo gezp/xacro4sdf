@@ -9,7 +9,7 @@
             <ixz>0</ixz>
             <iyy>${m*(x*x+z*z)/12}</iyy>
             <iyz>0</iyz>
-            <izz>${m*(x*x+z*z)/12}</izz>
+            <izz>${m*(x*x+y*y)/12}</izz>
         </inertia>
     </xacro_macro_define>
     <!--rplidar a2-->

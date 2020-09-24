@@ -82,8 +82,9 @@ The main feature of xacro4sdf is its support for macros,Define macros with the m
 
 ### Math expressions
 
-* Within dollared-braces `${xxxx}`, you can also write simple math expressions.
+* within dollared-braces `${xxxx}`, you can also write simple math expressions.
 * refer to examples of  **Properties** and **Macros** 
+* it's implemented by calling eval() in python, so it's unsafe for some cases.
 
 ## usage
 

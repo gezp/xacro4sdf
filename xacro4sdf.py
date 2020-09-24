@@ -42,6 +42,32 @@ def fixed_writexml(self, writer, indent="", addindent="", newl=""):
 # replace minidom's function with ours
 xml.dom.minidom.Element.writexml = fixed_writexml
 ###################################################################################################
+common_xacro_xml='''
+<sdf version="1.7">
+    <xacro_macro_define name="box_inertia" params="m x y z">
+        <mass>${m}</mass>
+        <inertia>
+            <ixx>${m*(y*y+z*z)/12}</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>${m*(x*x+z*z)/12}</iyy>
+            <iyz>0</iyz>
+            <izz>${m*(x*x+y*y)/12}</izz>
+        </inertia>
+    </xacro_macro_define>
+    <xacro_macro_define name="cylinder_inertia" params="m r h">
+        <mass>${m}</mass>
+        <inertia>
+            <ixx>${m*(3*r*r+h*h)/12}</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>${m*(3*r*r+h*h)/12}</iyy>
+            <iyz>0</iyz>
+            <izz>${m*r*r/2}</izz>
+        </inertia>
+    </xacro_macro_define>
+</sdf>
+'''
 
 g_property_table = {}
 local_property_table = {}
@@ -108,6 +134,8 @@ def addbanner(doc,input_file_name):
 def xacro4sdf(inputfile, outputfile):
     doc = xml.dom.minidom.parse(inputfile)
     root = doc.documentElement
+    # get common xacro
+    get_xacro(xml.dom.minidom.parseString(common_xacro_xml).documentElement)
     # get xacro
     get_xacro(root)
     # replace xacro property
