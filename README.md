@@ -23,7 +23,7 @@ Properties are named values that can be inserted anywhere into the XML document
 
 ```xml
 <!--defination of macro-->
-<xacro:property name="radius" value="4.3" />
+<xacro_property name="radius" value="4.3" />
 <!--use of macro-->
 <circle diameter="${2 * radius}" />
 ```
