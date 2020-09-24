@@ -15,7 +15,7 @@ a simple XML macro tool with python script for sdf, like [ros/xacro](https://git
 * Macros
 * Math expressions
 
-#### Properties
+### Properties
 
 Properties are named values that can be inserted anywhere into the XML document
 
@@ -34,7 +34,7 @@ Properties are named values that can be inserted anywhere into the XML document
 <circle diameter="8.6" />
 ```
 
-#### Macros
+### Macros
 
 The main feature of xacro4sdf is its support for macros,Define macros with the macro tag, and specify the macro name and the list of parameters. The list of parameters should be whitespace separated
 
@@ -80,7 +80,7 @@ The main feature of xacro4sdf is its support for macros,Define macros with the m
 
 * only support simple parameters (string and number),but block parameters isn't supported.
 
-#### Math expressions
+### Math expressions
 
 * Within dollared-braces `${xxxx}`, you can also write simple math expressions.
 * refer to examples of  **Properties** and **Macros** 
