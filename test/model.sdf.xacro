@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <sdf version="1.7">
     <xacro_property name="h" value="0.2" />
-    <xacro_macro_define name="box_inertia" params="m x y z">
+    <xacro_macro_define macro_name="box_inertia" params="m x y z">
         <mass>${m}</mass>
         <inertia>
             <ixx>${m*(y*y+z*z)/12}</ixx>
@@ -17,7 +17,7 @@
         <link name="link">
             <inertial>
                 <pose>0 0 0.02 0 0 0</pose>
-                <xacro_macro name="box_inertia" m="0.5" x="${h}" y="${h+0.1}" z="${2*h}"/>
+                <xacro_macro macro_name="box_inertia" m="0.5" x="${h}" y="${h+0.1}" z="${2*h}"/>
             </inertial>
             <collision name="collision">
                 <geometry>

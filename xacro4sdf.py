@@ -44,7 +44,7 @@ xml.dom.minidom.Element.writexml = fixed_writexml
 ###################################################################################################
 common_xacro_xml='''
 <sdf version="1.7">
-    <xacro_macro_define name="box_inertia" params="m x y z">
+    <xacro_macro_define macro_name="box_inertia" params="m x y z">
         <mass>${m}</mass>
         <inertia>
             <ixx>${m*(y*y+z*z)/12}</ixx>
@@ -55,7 +55,7 @@ common_xacro_xml='''
             <izz>${m*(x*x+y*y)/12}</izz>
         </inertia>
     </xacro_macro_define>
-    <xacro_macro_define name="cylinder_inertia" params="m r h">
+    <xacro_macro_define macro_name="cylinder_inertia" params="m r h">
         <mass>${m}</mass>
         <inertia>
             <ixx>${m*(3*r*r+h*h)/12}</ixx>
@@ -89,7 +89,7 @@ def get_xacro(root):
                 g_property_table[name] = try2number(node.getAttribute("value"))
                 root.removeChild(node)
             elif node.tagName == 'xacro_macro_define':
-                name = node.getAttribute("name")
+                name = node.getAttribute("macro_name")
                 g_macro_params_table[name] = node.getAttribute(
                     "params").split(' ')
                 g_macro_node_table[name] = node.toxml()
@@ -105,7 +105,7 @@ def eval_text(xml_str):
 
 def replace_macro_node(node):
     parent = node.parentNode
-    name = node.getAttribute("name")
+    name = node.getAttribute("macro_name")
     # get xml string
     xml_str = g_macro_node_table[name]
     # get local table

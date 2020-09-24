@@ -43,7 +43,7 @@ The main feature of xacro4sdf is its support for macros,Define macros with the m
 ```xml
 <!--defination of macro-->
 	<xacro_property name="mass" value="0.2" />
-	<xacro_macro_define name="box_inertia" params="m x y z">
+	<xacro_macro_define macro_name="box_inertia" params="m x y z">
         <mass>${m}</mass>
         <inertia>
             <ixx>${m*(y*y+z*z)/12}</ixx>
@@ -57,7 +57,7 @@ The main feature of xacro4sdf is its support for macros,Define macros with the m
 <!--use of macro-->
             <inertial>
                 <pose>0 0 0.02 0 0 0</pose>
-                <xacro_macro name="box_inertia" m="${mass}" x="0.3" y="0.1" z="0.2"/>
+                <xacro_macro macro_name="box_inertia" m="${mass}" x="0.3" y="0.1" z="0.2"/>
             </inertial>
 ```
 
