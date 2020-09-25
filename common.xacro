@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <sdf version="1.7">
-    <xacro_macro_define name="box_inertia" params="m x y z">
+    <!--macro defination:box_inertia-->
+    <xacro_macro_define macro_name="box_inertia" params="m x y z">
         <mass>${m}</mass>
         <inertia>
             <ixx>${m*(y*y+z*z)/12}</ixx>
@@ -11,7 +12,8 @@
             <izz>${m*(x*x+y*y)/12}</izz>
         </inertia>
     </xacro_macro_define>
-    <xacro_macro_define name="cylinder_inertia" params="m r h">
+    <!--macro defination:cylinder_inertia-->
+    <xacro_macro_define macro_name="cylinder_inertia" params="m r h">
         <mass>${m}</mass>
         <inertia>
             <ixx>${m*(3*r*r+h*h)/12}</ixx>
@@ -21,5 +23,47 @@
             <iyz>0</iyz>
             <izz>${m*r*r/2}</izz>
         </inertia>
+    </xacro_macro_define>
+    <!--macro defination:geometry cylinder-->
+    <xacro_macro_define macro_name="geometry_cylinder" params="r l">
+        <geometry>
+            <cylinder>
+                <radius>${r}</radius>
+                <length>${l}</length>
+            </cylinder>
+        </geometry>
+    </xacro_macro_define>
+    <!--macro defination:geometry box-->
+    <xacro_macro_define macro_name="geometry_box" params="x y z">
+        <geometry>
+            <box>
+                <size>${x} ${y} ${z}</size>
+            </box>
+        </geometry>
+    </xacro_macro_define>
+    <!--macro defination:geometry mesh-->
+    <xacro_macro_define macro_name="geometry_mesh" params="filename">
+        <geometry>
+            <mesh>
+                <uri>${filename}</uri>
+            </mesh>
+        </geometry>
+    </xacro_macro_define>
+    <!--macro defination:visual_collision_with_mesh-->
+    <xacro_macro_define macro_name="visual_collision_with_mesh" params="prefix filename">
+        <visual name="${prefix}_visual">
+            <geometry>
+                <mesh>
+                    <uri>${filename}</uri>
+                </mesh>
+            </geometry>
+        </visual>
+        <collision name="${prefix}_collision">
+            <geometry>
+                <mesh>
+                    <uri>${filename}</uri>
+                </mesh>
+            </geometry>
+        </collision>
     </xacro_macro_define>
 </sdf>
