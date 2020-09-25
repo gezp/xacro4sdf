@@ -44,8 +44,20 @@ xml.dom.minidom.Element.writexml = fixed_writexml
 ###################################################################################################
 common_xacro_xml='''
 <sdf version="1.7">
-    <!--macro defination:box_inertia-->
-    <xacro_macro_define macro_name="box_inertia" params="m x y z">
+    <!--macro defination:inertia_cylinder-->
+    <xacro_macro_define macro_name="inertia_cylinder" params="m r l">
+        <mass>${m}</mass>
+        <inertia>
+            <ixx>${m*(3*r*r+l*l)/12}</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>${m*(3*r*r+l*l)/12}</iyy>
+            <iyz>0</iyz>
+            <izz>${m*r*r/2}</izz>
+        </inertia>
+    </xacro_macro_define>
+    <!--macro defination:inertia_box-->
+    <xacro_macro_define macro_name="inertia_box" params="m x y z">
         <mass>${m}</mass>
         <inertia>
             <ixx>${m*(y*y+z*z)/12}</ixx>
@@ -54,18 +66,6 @@ common_xacro_xml='''
             <iyy>${m*(x*x+z*z)/12}</iyy>
             <iyz>0</iyz>
             <izz>${m*(x*x+y*y)/12}</izz>
-        </inertia>
-    </xacro_macro_define>
-    <!--macro defination:cylinder_inertia-->
-    <xacro_macro_define macro_name="cylinder_inertia" params="m r h">
-        <mass>${m}</mass>
-        <inertia>
-            <ixx>${m*(3*r*r+h*h)/12}</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>${m*(3*r*r+h*h)/12}</iyy>
-            <iyz>0</iyz>
-            <izz>${m*r*r/2}</izz>
         </inertia>
     </xacro_macro_define>
     <!--macro defination:geometry cylinder-->
