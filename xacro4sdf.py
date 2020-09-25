@@ -105,6 +105,9 @@ def eval_text(xml_str):
 
 def replace_macro_node(node):
     parent = node.parentNode
+    if not node.hasAttribute("macro_name"):
+        print("check <xacro_macro> block,not find attr macro_name!")
+        sys.exit(1)
     name = node.getAttribute("macro_name")
     # get xml string
     xml_str = g_macro_node_table[name]
@@ -164,7 +167,6 @@ def xacro4sdf(inputfile, outputfile):
 def error_with_exit():
     print("usage:python xacro4sdf.py inputfile \n(the name of inputfile must be xxx.xacro)")
     sys.exit(2)
-
 
 if __name__ == '__main__':
     if(len(sys.argv) < 2):
