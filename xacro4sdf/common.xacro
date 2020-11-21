@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <sdf version="1.7">
     <!--macro defination:inertia_cylinder-->
-    <xacro_macro_define macro_name="inertia_cylinder" params="m r l">
+    <xacro_define_macro name="inertia_cylinder" params="m r l">
         <mass>${m}</mass>
         <inertia>
             <ixx>${m*(3*r*r+l*l)/12}</ixx>
@@ -11,9 +11,9 @@
             <iyz>0</iyz>
             <izz>${m*r*r/2}</izz>
         </inertia>
-    </xacro_macro_define>
+    </xacro_define_macro>
     <!--macro defination:inertia_box-->
-    <xacro_macro_define macro_name="inertia_box" params="m x y z">
+    <xacro_define_macro name="inertia_box" params="m x y z">
         <mass>${m}</mass>
         <inertia>
             <ixx>${m*(y*y+z*z)/12}</ixx>
@@ -23,34 +23,34 @@
             <iyz>0</iyz>
             <izz>${m*(x*x+y*y)/12}</izz>
         </inertia>
-    </xacro_macro_define>
+    </xacro_define_macro>
     <!--macro defination:geometry cylinder-->
-    <xacro_macro_define macro_name="geometry_cylinder" params="r l">
+    <xacro_define_macro name="geometry_cylinder" params="r l">
         <geometry>
             <cylinder>
                 <radius>${r}</radius>
                 <length>${l}</length>
             </cylinder>
         </geometry>
-    </xacro_macro_define>
+    </xacro_define_macro>
     <!--macro defination:geometry box-->
-    <xacro_macro_define macro_name="geometry_box" params="x y z">
+    <xacro_define_macro name="geometry_box" params="x y z">
         <geometry>
             <box>
                 <size>${x} ${y} ${z}</size>
             </box>
         </geometry>
-    </xacro_macro_define>
+    </xacro_define_macro>
     <!--macro defination:geometry mesh-->
-    <xacro_macro_define macro_name="geometry_mesh" params="filename">
+    <xacro_define_macro name="geometry_mesh" params="filename">
         <geometry>
             <mesh>
                 <uri>${filename}</uri>
             </mesh>
         </geometry>
-    </xacro_macro_define>
+    </xacro_define_macro>
     <!--macro defination:visual_collision_with_mesh-->
-    <xacro_macro_define macro_name="visual_collision_with_mesh" params="prefix filename">
+    <xacro_define_macro name="visual_collision_with_mesh" params="prefix filename">
         <visual name="${prefix}_visual">
             <geometry>
                 <mesh>
@@ -65,5 +65,5 @@
                 </mesh>
             </geometry>
         </collision>
-    </xacro_macro_define>
+    </xacro_define_macro>
 </sdf>

@@ -1,23 +1,12 @@
 <?xml version="1.0"?>
 <sdf version="1.7">
-    <xacro_property name="h" value="0.2" />
-    <xacro_macro_define macro_name="inertia_box" params="m x y z">
-        <mass>${m}</mass>
-        <inertia>
-            <ixx>${m*(y*y+z*z)/12}</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>${m*(x*x+z*z)/12}</iyy>
-            <iyz>0</iyz>
-            <izz>${m*(x*x+y*y)/12}</izz>
-        </inertia>
-    </xacro_macro_define>
+    <xacro_define_property name="h" value="0.2" />
     <!--rplidar a2-->
     <model name='rplidar_a2'>
         <link name="link">
             <inertial>
                 <pose>0 0 0.02 0 0 0</pose>
-                <xacro_macro macro_name="inertia_box" m="0.5" x="${h}" y="${h+0.1}" z="${2*h}"/>
+                <xacro_macro name="inertia_box" m="0.5" x="${h}" y="${h+0.1}" z="${2*h}"/>
             </inertial>
             <collision name="collision">
                 <geometry>
