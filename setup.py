@@ -15,7 +15,7 @@ setup(
     url='https://github.com/robomaster-oss/xacro4sdf', 
     description='a simple XML macro script for sdf, like ros/xacro which is desiged for urdf.',  
     long_description=long_description,
-    long_description_content_type='text/markdown'
+    long_description_content_type='text/markdown',
     license='MIT',
     keywords=['sdf', 'xacro', 'gazebo', 'ignition'],
     include_package_data=True,
