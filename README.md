@@ -163,12 +163,12 @@ You can include other xacro files using the `<xacro_include_definition>` tag .
 
 **model include**
 
-You can include other xacro files using the `<xacro_model_definition>` tag.
+You can include other xacro files using the `<xacro_include_model>` tag.
 
 * it will only include the content  between `<model>...<model/>` in other xacro file.
 
 ```xml
-<xacro_include_definition url="model://simple_car/model.sdf.xacro"/>
+<xacro_include_model url="model://simple_car/model.sdf.xacro"/>
 ```
 
 >  it's not recommended include xacro file recursively 
