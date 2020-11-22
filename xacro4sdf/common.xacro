@@ -24,6 +24,18 @@
             <izz>${m*(x*x+y*y)/12}</izz>
         </inertia>
     </xacro_define_macro>
+    <!--macro defination:inertia_sphere-->
+    <xacro_define_macro name="inertia_sphere" params="m r">
+        <mass>${m}</mass>
+        <inertia>
+            <ixx>${2*m*r*r/5}</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>${2*m*r*r/5}</iyy>
+            <iyz>0</iyz>
+            <izz>${2*m*r*r/5}</izz>
+        </inertia>
+    </xacro_define_macro>
     <!--macro defination:geometry cylinder-->
     <xacro_define_macro name="geometry_cylinder" params="r l">
         <geometry>
@@ -41,27 +53,35 @@
             </box>
         </geometry>
     </xacro_define_macro>
+    <!--macro defination:geometry sphere-->
+    <xacro_define_macro name="geometry_sphere" params="r">
+        <geometry>
+            <sphere>
+                <radius>${r}</radius>
+            </sphere>
+        </geometry>
+    </xacro_define_macro>
     <!--macro defination:geometry mesh-->
-    <xacro_define_macro name="geometry_mesh" params="filename">
+    <xacro_define_macro name="geometry_mesh" params="uri">
         <geometry>
             <mesh>
-                <uri>${filename}</uri>
+                <uri>${uri}</uri>
             </mesh>
         </geometry>
     </xacro_define_macro>
     <!--macro defination:visual_collision_with_mesh-->
-    <xacro_define_macro name="visual_collision_with_mesh" params="prefix filename">
+    <xacro_define_macro name="visual_collision_with_mesh" params="prefix uri">
         <visual name="${prefix}_visual">
             <geometry>
                 <mesh>
-                    <uri>${filename}</uri>
+                    <uri>${uri}</uri>
                 </mesh>
             </geometry>
         </visual>
         <collision name="${prefix}_collision">
             <geometry>
                 <mesh>
-                    <uri>${filename}</uri>
+                    <uri>${uri}</uri>
                 </mesh>
             </geometry>
         </collision>
