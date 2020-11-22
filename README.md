@@ -158,7 +158,7 @@ You can include other xacro files using the `<xacro_include_definition>` tag ,in
 <xacro_include_definition uri="file://simple_car/model.sdf.xacro"/>
 ```
 
-* The uri for `model` means to search file in the list of folders  which is defined by  environment variable `IGN_GAZEBO_RESOURCE_PATH` and `GAZEBO_MODEL_PATH`
+* The uri for `model` means to search file in a list of folders which are defined by  environment variable `IGN_GAZEBO_RESOURCE_PATH` and `GAZEBO_MODEL_PATH`
 * The uri for `file` means to open the file directly. it try to open the file with relative path `simple_car/model.sdf.xacro` . you can also try to open file with absolute path `/simple_car/model.sdf.xacro` with uri `file:///simple_car/model.sdf.xacro`.
 
 **model include**
@@ -200,7 +200,7 @@ You can include other xacro files using the `<xacro_include_model>` tag.
   * the xacro defination (`<xacro_define_property>` and `<xacro_define_macro>`) must be child node of  root node `<sdf>` .
 * use of property and macro：`${xxx}` and `<xacro_macro>` 
 
-* include : `<xacro_include_definition>` and  `<xacro_model_definition>`
+* include : `<xacro_include_definition>` and  `<xacro_include_model>`
 
 **Steps of  process** (without include) 
 
