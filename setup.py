@@ -9,7 +9,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='xacro4sdf',  
-    version='1.0.1',  
+    version='1.1.0',  
     author='Ge Zhenpeng',  
     author_email='zhenpeng.ge@qq.com', 
     url='https://github.com/robomaster-oss/xacro4sdf', 
@@ -17,7 +17,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     license='MIT',
-    keywords=['sdf', 'xacro', 'gazebo', 'ignition'],
+    keywords=['sdf','sdformat','xacro', 'gazebo', 'ignition'],
     include_package_data=True,
     packages=find_packages(),
     entry_points={ 

@@ -18,17 +18,15 @@ def try2number(str):
     except ValueError:
         return str
 
-def parse_url(url):
+def parse_uri(uri):
     path = ""
-    result=url.split("://")
+    result=uri.split("://")
     if len(result)!=2:
         return path
     #get file path
     if result[0]=="file":
         if os.path.isfile(result[1]):
             path=result[1]
-        elif os.path.isfile("/"+result[1]):
-            path = "/"+result[1]
     if result[0]=="model":
         model_paths=[]
         if os.getenv("IGN_GAZEBO_RESOURCE_PATH") is not None:
@@ -60,19 +58,19 @@ def get_include_xacro(root):
     for node in root.childNodes:
         if node.nodeType == xml.dom.Node.ELEMENT_NODE:
             if node.tagName == 'xacro_include_definition':
-                url = node.getAttribute("url")
-                path = parse_url(url)
+                uri = node.getAttribute("uri")
+                path = parse_uri(uri)
                 #get xacro from file
                 if path != "":
                     tmp_doc = xml.dom.minidom.parse(path)
                     get_xacro(tmp_doc.documentElement)
                 else:
-                    print("not find xacro_include_definition url",url)
+                    print("not find xacro_include_definition uri",uri)
                 root.removeChild(node)
 
 def replace_inlcude_model_node(node):
-    url = node.getAttribute("url")
-    path = parse_url(url)
+    uri = node.getAttribute("uri")
+    path = parse_uri(uri)
     #get xacro from file
     if path != "":
         parent = node.parentNode
@@ -82,7 +80,7 @@ def replace_inlcude_model_node(node):
         for cc in list(new_node.childNodes):
             parent.insertBefore(cc, node)
     else:
-        print("not find xacro_include_define url",url)
+        print("not find xacro_include_define uri",uri)
     parent.removeChild(node)
 
 

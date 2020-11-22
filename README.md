@@ -149,17 +149,17 @@ The  usage of Macros is to define `<xacro_macro>` which will be replaced with `<
 
 **definition include**
 
-You can include other xacro files using the `<xacro_include_definition>` tag .
+You can include other xacro files using the `<xacro_include_definition>` tag ,include other xacro files according to param `uri`.
 
 *  it will only include the definition of properties with tag `<xacro_define_property>` and macros with tag `<xacro_define_macro>`.
 
 ```xml
-<xacro_include_definition url="model://simple_car/model.sdf.xacro"/>
-<xacro_include_definition url="file://simple_car/model.sdf.xacro"/>
+<xacro_include_definition uri="model://simple_car/model.sdf.xacro"/>
+<xacro_include_definition uri="file://simple_car/model.sdf.xacro"/>
 ```
 
-* The url for `model` means to search file in the list of folders  which is defined by  environment variable `IGN_GAZEBO_RESOURCE_PATH` and `GAZEBO_MODEL_PATH`
-* The url for `file` means to open the file directly. first, try to open the file with relative path `simple_car/model.sdf.xacro` . if can't open file with relative path, then try to open file with absolute path `/simple_car/model.sdf.xacro`  .
+* The uri for `model` means to search file in the list of folders  which is defined by  environment variable `IGN_GAZEBO_RESOURCE_PATH` and `GAZEBO_MODEL_PATH`
+* The uri for `file` means to open the file directly. it try to open the file with relative path `simple_car/model.sdf.xacro` . you can also try to open file with absolute path `/simple_car/model.sdf.xacro` with uri `file:///simple_car/model.sdf.xacro`.
 
 **model include**
 
@@ -168,7 +168,7 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 * it will only include the content  between `<model>...<model/>` in other xacro file.
 
 ```xml
-<xacro_include_model url="model://simple_car/model.sdf.xacro"/>
+<xacro_include_model uri="model://simple_car/model.sdf.xacro"/>
 ```
 
 >  it's not recommended include xacro file recursively 
