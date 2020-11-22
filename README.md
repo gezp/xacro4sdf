@@ -177,9 +177,11 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 <!--macro defination:inertia-->
 <xacro_define_macro name="inertia_cylinder" params="m r l">
 <xacro_define_macro name="inertia_box" params="m x y z">
+<xacro_define_macro name="inertia_sphere" params="m r">
 <!--macro defination:geometry-->
 <xacro_define_macro name="geometry_cylinder" params="r l">
 <xacro_define_macro name="geometry_box" params="x y z">
+<xacro_define_macro name="geometry_sphere" params="r">
 <xacro_define_macro name="geometry_mesh" params="uri">
 <!--macro defination:visual_collision_with_mesh-->
 <xacro_define_macro name="visual_collision_with_mesh" params="prefix uri">
