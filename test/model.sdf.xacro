@@ -9,14 +9,10 @@
                 <xacro_macro name="inertia_box" m="0.5" x="${h}" y="${h+0.1}" z="${2*h}"/>
             </inertial>
             <collision name="collision">
-                <geometry>
-                    <mesh filename="model://rplidar_a2/meshes/rplidar_a2.dae"/>
-                </geometry>
+                <xacro_macro name="geometry_mesh" uri="model://rplidar_a2/meshes/rplidar_a2.dae"/>
             </collision>
             <visual name="visual">
-                <geometry>
-                    <mesh filename="model://rplidar_a2/meshes/rplidar_a2.dae"/>
-                </geometry>
+                <xacro_macro name="geometry_mesh" uri="model://rplidar_a2/meshes/rplidar_a2.dae"/>
             </visual>
         </link>
     </model>

@@ -21,10 +21,9 @@ pip install xacro4sdf
 # cd xacro4sdf && sudo python3 setup.py install
 ```
 
-create model.sdf.xacro file
+create model.sdf.xacro file (test/model.sdf.xacro)
 
 ```xml
-<?xml version="1.0"?>
 <sdf version="1.7">
     <xacro_define_property name="h" value="0.2" />
     <!--rplidar a2-->
@@ -35,14 +34,10 @@ create model.sdf.xacro file
                 <xacro_macro name="inertia_box" m="0.5" x="${h}" y="${h+0.1}" z="${2*h}"/>
             </inertial>
             <collision name="collision">
-                <geometry>
-                    <mesh filename="model://rplidar_a2/meshes/rplidar_a2.dae"/>
-                </geometry>
+                <xacro_macro name="geometry_mesh" uri="model://rplidar_a2/meshes/rplidar_a2.dae"/>
             </collision>
             <visual name="visual">
-                <geometry>
-                    <mesh filename="model://rplidar_a2/meshes/rplidar_a2.dae"/>
-                </geometry>
+                <xacro_macro name="geometry_mesh" uri="model://rplidar_a2/meshes/rplidar_a2.dae"/>
             </visual>
         </link>
     </model>
@@ -58,7 +53,7 @@ run
 xacro4sdf model.sdf.xacro
 ```
 
-* it will generate  model.sdf
+* it will generate model.sdf (the result should be same as test/model.sdf)
 
 ## 2. Features:
 
@@ -185,9 +180,9 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 <!--macro defination:geometry-->
 <xacro_define_macro name="geometry_cylinder" params="r l">
 <xacro_define_macro name="geometry_box" params="x y z">
-<xacro_define_macro name="geometry_mesh" params="filename">
+<xacro_define_macro name="geometry_mesh" params="uri">
 <!--macro defination:visual_collision_with_mesh-->
-<xacro_define_macro name="visual_collision_with_mesh" params="prefix filename">
+<xacro_define_macro name="visual_collision_with_mesh" params="prefix uri">
 ```
 
 * you can directly use the  macro in your xacro file.

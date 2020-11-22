@@ -21,12 +21,16 @@
 			</inertial>
 			<collision name="collision">
 				<geometry>
-					<mesh filename="model://rplidar_a2/meshes/rplidar_a2.dae"/>
+					<mesh>
+						<uri>model://rplidar_a2/meshes/rplidar_a2.dae</uri>
+					</mesh>
 				</geometry>
 			</collision>
 			<visual name="visual">
 				<geometry>
-					<mesh filename="model://rplidar_a2/meshes/rplidar_a2.dae"/>
+					<mesh>
+						<uri>model://rplidar_a2/meshes/rplidar_a2.dae</uri>
+					</mesh>
 				</geometry>
 			</visual>
 		</link>
