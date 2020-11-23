@@ -9,7 +9,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='xacro4sdf',  
-    version='1.2.0',  
+    version='1.2.1',  
     author='Ge Zhenpeng',  
     author_email='zhenpeng.ge@qq.com', 
     url='https://github.com/robomaster-oss/xacro4sdf', 
