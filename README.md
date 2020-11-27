@@ -1,13 +1,12 @@
 # xacro4sdf
-a simple XML macro tool with python script for sdf, like [ros/xacro](https://github.com/ros/xacro) which is desiged for urdf.
+a simple python script to define and parse XML macro for [sdf (sdformat)](http://sdformat.org/), like [ros/xacro](https://github.com/ros/xacro) which is desiged for urdf.
 
 > Reference: [ros/xacro](https://github.com/ros/xacro)
 >
 > With Xacro, you can construct shorter and more readable XML files by using macros that expand to larger XML expressions. 
 >
-> * xacro4sdf
 
-**it's only a simple script for SDF macro and it's incompatible with xacro API(ros/xacro)**
+**xacro4sdf is incompatible with xacro API(ros/xacro)**
 
 ## 1. Example and Usage
 
@@ -55,7 +54,7 @@ xacro4sdf model.sdf.xacro
 
 * it will generate model.sdf (the result should be same as test/model.sdf)
 
-## 2. Features:
+## 2. Features
 
 * Properties	
 * Macros
@@ -166,10 +165,12 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 <xacro_include_model uri="model://simple_car/model.sdf.xacro"/>
 ```
 
->  it's not recommended include xacro file recursively 
+>  Tips: 
 >
->  * only support <=5  for model include 
->  * definition include is not supported.
+>  *  `<xacro_include_definition>` of the child's xacro file(`uri`) will not be processed, so including  recursively  is not supported for  `<xacro_include_definition>` .
+>
+>  * it's not recommended to use  `<xacro_include_model>` , including  recursively  is  supported for `<xacro_include_model>`  (only <=5 )
+>  * be careful when using  `<xacro_include_definition>`  and `<xacro_include_model>`
 
 ### 2.5 pre-defined common.xacro
 
