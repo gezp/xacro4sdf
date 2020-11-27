@@ -17,7 +17,7 @@ Install
 #install by pip
 pip install xacro4sdf 
 # or install from source code
-# git clone https://github.com/robomaster-oss/xacro4sdf.git
+# git clone https://github.com/gezp/xacro4sdf.git
 # cd xacro4sdf && sudo python3 setup.py install
 ```
 
