@@ -7,7 +7,7 @@ a simple XML macro tool with python script for sdf, like [ros/xacro](https://git
 >
 > * xacro4sdf
 
-**now, it's only a simple script for SDF macro and it's incompatible with xacro API(ros/xacro)**
+**it's only a simple script for SDF macro and it's incompatible with xacro API(ros/xacro)**
 
 ## 1. Example and Usage
 

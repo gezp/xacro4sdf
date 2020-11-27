@@ -12,7 +12,7 @@ setup(
     version='1.2.1',  
     author='Ge Zhenpeng',  
     author_email='zhenpeng.ge@qq.com', 
-    url='https://github.com/robomaster-oss/xacro4sdf', 
+    url='https://github.com/gezp/xacro4sdf', 
     description='a simple XML macro script for sdf, like ros/xacro which is desiged for urdf.',  
     long_description=long_description,
     long_description_content_type='text/markdown',
