@@ -23,25 +23,28 @@ pip install xacro4sdf
 create model.sdf.xacro file (test/model.sdf.xacro)
 
 ```xml
+<?xml version="1.0"?>
 <sdf version="1.7">
-    <xacro_define_property name="h" value="0.2" />
+    <xacro_define_property name="rplidar_a2_h" value="0.2" />
+    <xacro_define_macro name = "rplidar_a2_collision_and_visual" params="prefix">
+        <collision name="${prefix}_collision">
+            <xacro_macro name="geometry_mesh" uri="model://rplidar_a2/meshes/rplidar_a2.dae"/>
+        </collision>
+        <visual name="${prefix}_visual">
+            <xacro_macro name="geometry_mesh" uri="model://rplidar_a2/meshes/rplidar_a2.dae"/>
+        </visual>
+    </xacro_define_macro>
     <!--rplidar a2-->
     <model name='rplidar_a2'>
         <link name="link">
             <inertial>
                 <pose>0 0 0.02 0 0 0</pose>
-                <xacro_macro name="inertia_box" m="0.5" x="${h}" y="${h+0.1}" z="${2*h}"/>
+                <xacro_macro name="inertia_box" m="0.5" x="${rplidar_a2_h}" y="${rplidar_a2_h+0.1}" z="${2*rplidar_a2_h}"/>
             </inertial>
-            <collision name="collision">
-                <xacro_macro name="geometry_mesh" uri="model://rplidar_a2/meshes/rplidar_a2.dae"/>
-            </collision>
-            <visual name="visual">
-                <xacro_macro name="geometry_mesh" uri="model://rplidar_a2/meshes/rplidar_a2.dae"/>
-            </visual>
+            <xacro_macro name="rplidar_a2_collision_and_visual" prefix="rplidar_a2"/>
         </link>
     </model>
 </sdf>
-
 ```
 
 * the macro of  `inertia_box` is pre-defined in `common.xacro` (refer to `2.5 pre-defined common.xacro`)
@@ -53,6 +56,7 @@ xacro4sdf model.sdf.xacro
 ```
 
 * it will generate model.sdf (the result should be same as test/model.sdf)
+* more examples can be found `test` folder.
 
 ## 2. Features
 
@@ -167,10 +171,11 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 
 >  Tips: 
 >
->  *  `<xacro_include_definition>` of the child's xacro file(`uri`) will not be processed, so including  recursively  is not supported for  `<xacro_include_definition>` .
->
->  * it's not recommended to use  `<xacro_include_model>` , including  recursively  is  supported for `<xacro_include_model>`  (only <=5 )
->  * be careful when using  `<xacro_include_definition>`  and `<xacro_include_model>`
+>  *   `<xacro_include_definition>`  supports  to include  recursively.  
+>  *   `<xacro_include_model>`  doesn't  support  to include recursively. and `<xacro_include_definition>` should be used before using  `<xacro_include_model>`  .
+>     *  it's generally used to overwrite property with  `<xacro_define_property>`  .
+>  *  Don't use same name for  xacro definition (the param `name` of  `<xacro_define_property>`  and `<xacro_define_macro>`) , otherwise the priority of xacro definition need be considered.
+>  * Be carefully when using  `<xacro_include_definition>`  and `<xacro_include_model>`
 
 ### 2.5 pre-defined common.xacro
 
@@ -196,9 +201,8 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 
 * definition of property and macro： `<xacro_define_property>` and `<xacro_define_macro>`
   * the xacro defination (`<xacro_define_property>` and `<xacro_define_macro>`) must be child node of  root node `<sdf>` .
+* include : `<xacro_include_definition>` ,  `<xacro_include_model>` 
 * use of property and macro：`${xxx}` and `<xacro_macro>` 
-
-* include : `<xacro_include_definition>` and  `<xacro_include_model>`
 
 **Steps of  process** (without include) 
 

@@ -47,26 +47,33 @@ def get_xacro(root):
             if node.tagName == 'xacro_define_property':
                 name = node.getAttribute("name")
                 g_property_table[name] = try2number(node.getAttribute("value"))
-                root.removeChild(node)
             elif node.tagName == 'xacro_define_macro':
                 name = node.getAttribute("name")
                 g_macro_params_table[name] = node.getAttribute("params").split(' ')
                 g_macro_node_table[name] = node.toxml()
-                root.removeChild(node)
 
-def get_include_xacro(root):
+def get_include_xacro_recursively(root):
     for node in root.childNodes:
         if node.nodeType == xml.dom.Node.ELEMENT_NODE:
             if node.tagName == 'xacro_include_definition':
                 uri = node.getAttribute("uri")
                 path = parse_uri(uri)
-                #get xacro from file
                 if path != "":
                     tmp_doc = xml.dom.minidom.parse(path)
+                    tmp_root=tmp_doc.documentElement
+                    #get xacro from child recursively
+                    get_include_xacro_recursively(tmp_root)
+                    #get xacro from file
                     get_xacro(tmp_doc.documentElement)
                 else:
                     print("not find xacro_include_definition uri",uri)
+            
+def remove_definition_xacro_node(root):
+    for node in root.childNodes:
+        if node.nodeType == xml.dom.Node.ELEMENT_NODE:
+            if node.tagName == 'xacro_define_property' or node.tagName == 'xacro_define_macro' or node.tagName == 'xacro_include_definition':
                 root.removeChild(node)
+
 
 def replace_inlcude_model_node(node):
     uri = node.getAttribute("uri")
@@ -83,7 +90,7 @@ def replace_inlcude_model_node(node):
         print("not find xacro_include_define uri",uri)
     parent.removeChild(node)
 
-
+############################################################replace <xacro_macro>
 def re_eval_fn(obj):
     result = eval(obj.group(1), g_property_table, l_property_table)
     return str(result)
@@ -95,7 +102,7 @@ def eval_text(xml_str):
 def replace_macro_node(node):
     parent = node.parentNode
     if not node.hasAttribute("name"):
-        print("check <xacro_macro> block,not find attrname!")
+        print("check <xacro_macro> block,not find parameter name!")
         sys.exit(1)
     name = node.getAttribute("name")
     # get xml string
@@ -110,6 +117,7 @@ def replace_macro_node(node):
     for cc in list(new_node.childNodes):
         parent.insertBefore(cc, node)
     parent.removeChild(node)
+##############################################################################
 
 #reference: https://github.com/ros/xacro/blob/noetic-devel/src/xacro/__init__.py
 def addbanner(doc,input_file_name):
@@ -126,25 +134,24 @@ def addbanner(doc,input_file_name):
 def xacro4sdf(inputfile, outputfile):
     doc = xml.dom.minidom.parse(inputfile)
     root = doc.documentElement
-    ###### get xacro (common xacro,inlcue xacro,the doc xacro)
-    # get common xacro
+    ################# get xacro defination(store macro defination to dictionary)
+    # get common xacro (lowest priority,it can be overwrited)
     folder = os.path.dirname(os.path.abspath(__file__)) 
     get_xacro(xml.dom.minidom.parse(os.path.join(folder,'common.xacro')).documentElement)
-    # get inlcude xacro
-    get_include_xacro(root)
-    # get xacro
+    # get inlcude xacro recursively (the priority depends on the order of tag<xacro_include_definition>)
+    get_include_xacro_recursively(root)
+    # get current xacro (highest priority)
     get_xacro(root)
-    ####### relapce xacro
-    # replace xacro include model
-    for _ in range(5):
-        nodes = doc.getElementsByTagName("xacro_include_model")
-        if nodes.length == 0:
-            break
-        else:
-            for node in list(nodes):
-                replace_inlcude_model_node(node)
+    # remove xacro defination (<xacro_define_property>,<xacro_define_macro>,<xacro_include_definition>)
+    remove_definition_xacro_node(root)
+    ################# relapce xacro
+    # replace xacro include model 
+    nodes = doc.getElementsByTagName("xacro_include_model")
+    if nodes.length != 0:
+        for node in list(nodes):
+            replace_inlcude_model_node(node)
     if doc.getElementsByTagName("xacro_inlcude_model").length != 0:
-        print("Error:The nesting of xacro_include_model is much deep! only support <=5")
+        print("Error:The nesting of xacro_include_model is not supported!")
         sys.exit(1)
     # replace xacro property (doc -> doc, process by string regular expression operations)
     l_property_table.clear()
@@ -163,13 +170,14 @@ def xacro4sdf(inputfile, outputfile):
     if doc.getElementsByTagName("xacro_macro").length != 0:
         print("Error:The nesting of macro defination is much deep! only support <=5")
         sys.exit(1)
-    # output
+    ################## output
     addbanner(doc,inputfile)
     try:
         with open(outputfile, 'w', encoding='UTF-8') as f:
             doc.writexml(f, indent='', addindent='\t', newl='\n', encoding='UTF-8')
     except Exception as err:
         print('output error:{0}'.format(err))
+
 
 def main():
     if(len(sys.argv) >= 2):
