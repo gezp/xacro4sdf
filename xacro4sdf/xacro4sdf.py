@@ -28,7 +28,7 @@ def try2number(str):
         return str
 
 # returh a absolute path.
-# current_dirname is needed for file://
+# current_dirname is needed for 'file://'
 def parse_uri(uri,current_dirname):
     path = ""
     result=uri.split("://")
