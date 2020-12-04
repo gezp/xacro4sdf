@@ -6,6 +6,15 @@ import re
 import xml.dom.minidom
 import xacro4sdf.xml_format
 
+#model paths list
+g_model_paths=[]
+if os.getenv("IGN_GAZEBO_RESOURCE_PATH") is not None:
+    g_model_paths=g_model_paths+os.getenv("IGN_GAZEBO_RESOURCE_PATH").split(":")
+if os.getenv("GAZEBO_MODEL_PATH") is not None:
+    g_model_paths=g_model_paths+os.getenv("GAZEBO_MODEL_PATH").split(":")
+if os.getenv("XACRO4SDF_MODEL_PATH") is not None:
+    g_model_paths=g_model_paths+os.getenv("XACRO4SDF_MODEL_PATH").split(":")
+
 #global vaiables
 g_property_table = {}
 l_property_table = {}
@@ -18,23 +27,23 @@ def try2number(str):
     except ValueError:
         return str
 
-def parse_uri(uri):
+# returh a absolute path.
+# current_dirname is needed for file://
+def parse_uri(uri,current_dirname):
     path = ""
     result=uri.split("://")
     if len(result)!=2:
         return path
-    #get file path
-    if result[0]=="file":
+    #get absolute path according to uri
+    if result[0] == "file":
+        #to absolute path
+        if(not os.path.isabs(result[1])):
+            result[1]=os.path.join(current_dirname,result[1])
         if os.path.isfile(result[1]):
-            path=result[1]
-    if result[0]=="model":
-        model_paths=[]
-        if os.getenv("IGN_GAZEBO_RESOURCE_PATH") is not None:
-            model_paths=model_paths+os.getenv("IGN_GAZEBO_RESOURCE_PATH").split(":")
-        if os.getenv("GAZEBO_MODEL_PATH") is not None:
-            model_paths=model_paths+os.getenv("GAZEBO_MODEL_PATH").split(":")
-        for path in model_paths:
-            file_path = path+"/"+result[1]
+            path = os.path.abspath(result[1])
+    elif result[0] == "model":
+        for path in g_model_paths:
+            file_path = os.path.join(path,result[1])
             if(os.path.isfile(file_path)):
                 path = file_path
                 break
@@ -52,17 +61,17 @@ def get_xacro(root):
                 g_macro_params_table[name] = node.getAttribute("params").split(' ')
                 g_macro_node_table[name] = node.toxml()
 
-def get_include_xacro_recursively(root):
+def get_include_xacro_recursively(root,abs_dirname):
     for node in root.childNodes:
         if node.nodeType == xml.dom.Node.ELEMENT_NODE:
             if node.tagName == 'xacro_include_definition':
                 uri = node.getAttribute("uri")
-                path = parse_uri(uri)
+                path = parse_uri(uri,abs_dirname)
                 if path != "":
                     tmp_doc = xml.dom.minidom.parse(path)
                     tmp_root=tmp_doc.documentElement
                     #get xacro from child recursively
-                    get_include_xacro_recursively(tmp_root)
+                    get_include_xacro_recursively(tmp_root,os.path.dirname(path))
                     #get xacro from file
                     get_xacro(tmp_doc.documentElement)
                 else:
@@ -75,9 +84,9 @@ def remove_definition_xacro_node(root):
                 root.removeChild(node)
 
 
-def replace_inlcude_model_node(node):
+def replace_inlcude_model_node(node,abs_dirname):
     uri = node.getAttribute("uri")
-    path = parse_uri(uri)
+    path = parse_uri(uri,abs_dirname)
     #get xacro from file
     if path != "":
         parent = node.parentNode
@@ -132,14 +141,15 @@ def addbanner(doc,input_file_name):
         doc.insertBefore(comment, first)
 
 def xacro4sdf(inputfile, outputfile):
+    inputfile_dir_path=os.path.dirname(os.path.abspath(inputfile))
     doc = xml.dom.minidom.parse(inputfile)
     root = doc.documentElement
     ################# get xacro defination(store macro defination to dictionary)
     # get common xacro (lowest priority,it can be overwrited)
-    folder = os.path.dirname(os.path.abspath(__file__)) 
-    get_xacro(xml.dom.minidom.parse(os.path.join(folder,'common.xacro')).documentElement)
+    common_xacro_path = os.path.join(os.path.dirname(os.path.abspath(__file__)) ,'common.xacro')
+    get_xacro(xml.dom.minidom.parse(common_xacro_path).documentElement)
     # get inlcude xacro recursively (the priority depends on the order of tag<xacro_include_definition>)
-    get_include_xacro_recursively(root)
+    get_include_xacro_recursively(root,inputfile_dir_path)
     # get current xacro (highest priority)
     get_xacro(root)
     # remove xacro defination (<xacro_define_property>,<xacro_define_macro>,<xacro_include_definition>)
@@ -149,7 +159,7 @@ def xacro4sdf(inputfile, outputfile):
     nodes = doc.getElementsByTagName("xacro_include_model")
     if nodes.length != 0:
         for node in list(nodes):
-            replace_inlcude_model_node(node)
+            replace_inlcude_model_node(node,inputfile_dir_path)
     if doc.getElementsByTagName("xacro_inlcude_model").length != 0:
         print("Error:The nesting of xacro_include_model is not supported!")
         sys.exit(1)
