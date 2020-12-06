@@ -214,6 +214,6 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 
 ## 4. Maintainer and License 
 
-maintainer : Ge Zhenpeng  zhenpeng.ge@qq.com
+maintainer : Zhenpeng Ge, zhenpeng.ge@qq.com
 
-`xacro4sdf`  is provided under MIT.
+`xacro4sdf` is provided under MIT.
