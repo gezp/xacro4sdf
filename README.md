@@ -195,22 +195,39 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 
 * you can directly use the  macro in your xacro file.
 
-## 3. Extra Explanation For Source Code
+## 3. Extra explanation for xacro4sdf
 
-**the Tag In model.sdf.xacro**
+**summary for xacro4sdf**
 
-* definition of property and macro： `<xacro_define_property>` and `<xacro_define_macro>`
-  * the xacro defination (`<xacro_define_property>` and `<xacro_define_macro>`) must be child node of  root node `<sdf>` .
-* include : `<xacro_include_definition>` ,  `<xacro_include_model>` 
-* use of property and macro：`${xxx}` and `<xacro_macro>` 
+* definition of property and macro : core function
+  * `<xacro_define_property>` and `<xacro_define_macro>`
+* include 
+  * `<xacro_include_definition>` :include definition of property and macro of other xacro file,it's very useful for modular modeling.
+  * `<xacro_include_model>` :include `<model>...<model/>`content (including recursively is not supported),be carefully to use this tag.
+* use of property and macro:
+  * `${xxx}` : use of property ,it's very useful to use math expressions.
+  * `<xacro_macro>` : use of macro, it's very useful for modular modeling.
 
-**Steps of  process** (without include) 
+> Tip:
+> the xacro defination (`<xacro_define_property>` , `<xacro_define_macro>` and  `<xacro_include_definition>`) must be child node of root node `<sdf>` .
 
-* use dictionary to store the definitions, property dictionary (`<param,value>`) and macro dictionary (`<macro_name,xml_string>`, `<macro_name,params>`) , and remove nodes with these tag.
-* process global property `${xxx}` between `<model>...</model>` by using   `eval()`  
-* process tag  `<xacro_macro>` , and replace `<xacro_macro>` with macro dictionary `<macro_name,xml_string>`  according to the param `name` of  `<xacro_macro>` , and use `eval()`  to replace `${xxx}` in `<xacro_define_property>`  by using global property  dictionary  and  local property  dictionary.
-  * the params of `<xacro_define_property>` make up global property dictionary , the params of  `<xacro_macro>` make up  local property  dictionary.
-  * it will recursively process 5 times.
+**Steps of xacro4sdf** 
+
+* get xacro defination(<xacro_define_property>,<xacro_define_macro>,<xacro_include_definition>) , store macro defination to dictionary.
+  * get common xacro (lowest priority,it can be overwrited)
+  * get inlcude xacro recursively (the priority depends on the order of tag<xacro_include_definition>)
+  * get current xacro (highest priority)
+  * remove xacro defination xml (<xacro_define_property>,<xacro_define_macro>,<xacro_include_definition>)
+* relapce xacro (use of xacro)
+  * replace xacro include model 
+  * replace xacro property (`${...}`) between `<model>...<model/>` (process global variable)
+  * replace xacro macro (`<xacro_macro>`) by loop (including recursively depth <=5)
+
+> Tip:
+> * the definitions of dictionary, property dictionary (`<param,value>`) , macro dictionary (`<macro_name,xml_string>`, `<macro_name,params>`).
+> * use `eval()` to process `${xxx}` 
+> * process `${xxx}` in `<xacro_macro>` ,  use `eval()` with global property dictionary and local property  dictionary.
+>   * the params of `<xacro_define_property>` make up global property dictionary , the params of  `<xacro_macro>` make up  local property  dictionary.
 
 ## 4. Maintainer and License 
 
