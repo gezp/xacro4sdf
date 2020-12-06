@@ -215,7 +215,7 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 
 * get xacro defination(`<xacro_define_property>`,`<xacro_define_macro>`,`<xacro_include_definition>`) , store macro defination to dictionary.
   * get common xacro (lowest priority,it can be overwrited)
-  * get inlcude xacro recursively (the priority depends on the order of tag<xacro_include_definition>)
+  * get inlcude xacro recursively (the priority depends on the order of tag `<xacro_include_definition>`)
   * get current xacro (highest priority)
   * remove xacro defination xml (`<xacro_define_property>`,`<xacro_define_macro>`,`<xacro_include_definition>`)
 * relapce xacro (use of xacro)
@@ -224,9 +224,12 @@ You can include other xacro files using the `<xacro_include_model>` tag.
   * replace xacro macro (`<xacro_macro>`) by loop (including recursively depth <=5)
 
 > Tip:
-> * the definitions of dictionary: property dictionary (`<param,value>`) , macro dictionary (`<macro_name,xml_string>`, `<macro_name,params>`).
+> * the definitions of dictionary
+>   * property dictionary (`<param,value>`) .
+>   * macro dictionary (`<macro_name,xml_string>`, `<macro_name,params>`).
 > * process `${xxx}` in `<xacro_macro>` :  use `eval()` with global property dictionary and local property  dictionary.
->   * the params of `<xacro_define_property>` make up global property dictionary , the params of  `<xacro_macro>` make up  local property  dictionary.
+>   * the params of `<xacro_define_property>` make up global property dictionary 
+>   * the params of  `<xacro_macro>` make up  local property  dictionary.
 
 ## 4. Maintainer and License 
 
