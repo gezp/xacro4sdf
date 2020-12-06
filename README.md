@@ -1,12 +1,16 @@
 # xacro4sdf
-a simple python script to define and parse XML macro for [sdf (sdformat)](http://sdformat.org/), like [ros/xacro](https://github.com/ros/xacro) which is desiged for urdf.
+
+![PyPI](https://img.shields.io/pypi/v/xacro4sdf)
+
+`xacro4sdf` is a simple tool to define and parse XML macro for [sdf (sdformat)](http://sdformat.org/), you can use `xacro4sdf` to write modularized SDF xml (not nest model) 
+
+* xacro4sdf is similar, but different from  [ros/xacro](https://github.com/ros/xacro) which is desiged for urdf. the function of xacro4sdf is more simple, but it's also more easy to use.
 
 > Reference: [ros/xacro](https://github.com/ros/xacro)
 >
 > With Xacro, you can construct shorter and more readable XML files by using macros that expand to larger XML expressions. 
->
 
-**xacro4sdf is incompatible with xacro API(ros/xacro)**
+**Attention: xacro4sdf is incompatible with ros/xacro API**
 
 ## 1. Example and Usage
 
