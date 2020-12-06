@@ -30,24 +30,24 @@ def try2number(str):
 # returh a absolute path.
 # current_dirname is needed for 'file://'
 def parse_uri(uri,current_dirname):
-    path = ""
-    result=uri.split("://")
-    if len(result)!=2:
-        return path
+    result = ""
+    splited_str=uri.split("://")
+    if len(splited_str)!=2:
+        return result
     #get absolute path according to uri
-    if result[0] == "file":
+    if splited_str[0] == "file":
         #to absolute path
-        if(not os.path.isabs(result[1])):
-            result[1]=os.path.join(current_dirname,result[1])
-        if os.path.isfile(result[1]):
-            path = os.path.abspath(result[1])
-    elif result[0] == "model":
-        for path in g_model_paths:
-            file_path = os.path.join(path,result[1])
-            if(os.path.isfile(file_path)):
-                path = file_path
+        if(not os.path.isabs(splited_str[1])):
+            splited_str[1]=os.path.join(current_dirname,splited_str[1])
+        if os.path.isfile(splited_str[1]):
+            result = os.path.abspath(splited_str[1])
+    elif splited_str[0] == "model":
+        for tmp_path in g_model_paths:
+            tmp_path = os.path.join(tmp_path,splited_str[1])
+            if(os.path.isfile(tmp_path)):
+                result = tmp_path
                 break
-    return path
+    return result
 
 def get_xacro(root):
     # only find in <sdf>...</sdf>
@@ -66,16 +66,18 @@ def get_include_xacro_recursively(root,abs_dirname):
         if node.nodeType == xml.dom.Node.ELEMENT_NODE:
             if node.tagName == 'xacro_include_definition':
                 uri = node.getAttribute("uri")
-                path = parse_uri(uri,abs_dirname)
-                if path != "":
-                    tmp_doc = xml.dom.minidom.parse(path)
+                file_path = parse_uri(uri,abs_dirname)
+                if file_path != "":
+                    tmp_doc = xml.dom.minidom.parse(file_path)
                     tmp_root=tmp_doc.documentElement
                     #get xacro from child recursively
-                    get_include_xacro_recursively(tmp_root,os.path.dirname(path))
+                    get_include_xacro_recursively(tmp_root,os.path.dirname(file_path))
                     #get xacro from file
                     get_xacro(tmp_doc.documentElement)
                 else:
-                    print("not find xacro_include_definition uri",uri)
+                    print("Error: not find xacro_include_definition uri",uri)
+                    sys.exit(1)
+
             
 def remove_definition_xacro_node(root):
     for node in root.childNodes:
@@ -96,7 +98,8 @@ def replace_inlcude_model_node(node,abs_dirname):
         for cc in list(new_node.childNodes):
             parent.insertBefore(cc, node)
     else:
-        print("not find xacro_include_define uri",uri)
+        print("Error: not find xacro_include_model uri ",uri)
+        sys.exit(1)
     parent.removeChild(node)
 
 ############################################################replace <xacro_macro>
@@ -150,6 +153,7 @@ def xacro4sdf(inputfile, outputfile):
     get_xacro(xml.dom.minidom.parse(common_xacro_path).documentElement)
     # get inlcude xacro recursively (the priority depends on the order of tag<xacro_include_definition>)
     get_include_xacro_recursively(root,inputfile_dir_path)
+    # print(g_macro_node_table.keys())
     # get current xacro (highest priority)
     get_xacro(root)
     # remove xacro defination (<xacro_define_property>,<xacro_define_macro>,<xacro_include_definition>)
