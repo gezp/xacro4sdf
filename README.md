@@ -1,6 +1,6 @@
 # xacro4sdf
 
-![PyPI](https://img.shields.io/pypi/v/xacro4sdf)
+![PyPI](https://img.shields.io/pypi/v/xacro4sdf)  ![](https://img.shields.io/pypi/l/xacro4sdf) ![](https://img.shields.io/pypi/dm/xacro4sdf)
 
 `xacro4sdf` is a simple tool to define and parse XML macro for [sdf (sdformat)](http://sdformat.org/), you can use `xacro4sdf` to write modularized SDF xml (not nest model) 
 
@@ -239,4 +239,4 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 
 maintainer : Zhenpeng Ge, zhenpeng.ge@qq.com
 
-`xacro4sdf` is provided under MIT.
+`xacro4sdf` is provided under MIT License.
