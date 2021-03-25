@@ -149,7 +149,7 @@ def xacro4sdf(inputfile, outputfile):
     root = doc.documentElement
     ################# get xacro defination(store macro defination to dictionary)
     # get common xacro (lowest priority,it can be overwrited)
-    common_xacro_path = os.path.join(os.path.dirname(os.path.abspath(__file__)) ,'common.xacro')
+    common_xacro_path = os.path.join(os.path.dirname(os.path.abspath(__file__)) ,'common.xmacro')
     get_xacro(xml.dom.minidom.parse(common_xacro_path).documentElement)
     # get inlcude xacro recursively (the priority depends on the order of tag<xacro_include_definition>)
     get_include_xacro_recursively(root,inputfile_dir_path)
@@ -198,11 +198,13 @@ def main():
         inputfile = sys.argv[1]
         outputfile = os.path.splitext(inputfile)[0]
         if os.path.splitext(inputfile)[1] == '.xacro':
+            print("Attention: inputfile with xxx.xmacro is recommanded to show the difference from ros/xacro")
+        if os.path.splitext(inputfile)[1] == '.xmacro' or os.path.splitext(inputfile)[1] == '.xacro':
             # run xacro4sdf
             xacro4sdf(inputfile, outputfile)
             return 0
     #error
-    print("usage: xacro4sdf <inputfile> (the name of inputfile must be xxx.xacro)")
+    print("usage: xacro4sdf <inputfile> (the name of inputfile must be xxx.xmacro)")
 
 if __name__ == '__main__':
     main()

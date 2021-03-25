@@ -24,7 +24,7 @@ pip install xacro4sdf
 # cd xacro4sdf && sudo python3 setup.py install
 ```
 
-create model.sdf.xacro file (test/model.sdf.xacro)
+create model.sdf.xmacro file (test/model.sdf.xmacro)
 
 ```xml
 <?xml version="1.0"?>
@@ -51,12 +51,12 @@ create model.sdf.xacro file (test/model.sdf.xacro)
 </sdf>
 ```
 
-* the macro of  `inertia_box` is pre-defined in `common.xacro` (refer to `2.5 pre-defined common.xacro`)
+* the macro of  `inertia_box` is pre-defined in `common.xmacro` (refer to `2.5 pre-defined common.xmacro`)
 
 run
 
 ```bash
-xacro4sdf model.sdf.xacro
+xacro4sdf model.sdf.xmacro
 ```
 
 * it will generate model.sdf (the result should be same as test/model.sdf)
@@ -156,12 +156,12 @@ You can include other xacro files using the `<xacro_include_definition>` tag ,in
 *  it will only include the definition of properties with tag `<xacro_define_property>` and macros with tag `<xacro_define_macro>`.
 
 ```xml
-<xacro_include_definition uri="model://simple_car/model.sdf.xacro"/>
-<xacro_include_definition uri="file://simple_car/model.sdf.xacro"/>
+<xacro_include_definition uri="model://simple_car/model.sdf.xmacro"/>
+<xacro_include_definition uri="file://simple_car/model.sdf.xmacro"/>
 ```
 
 * The uri for `model` means to search file in a list of folders which are defined by  environment variable `IGN_GAZEBO_RESOURCE_PATH` and `GAZEBO_MODEL_PATH`
-* The uri for `file` means to open the file directly. it try to open the file with relative path `simple_car/model.sdf.xacro` . you can also try to open file with absolute path `/simple_car/model.sdf.xacro` with uri `file:///simple_car/model.sdf.xacro`.
+* The uri for `file` means to open the file directly. it try to open the file with relative path `simple_car/model.sdf.xmacro` . you can also try to open file with absolute path `/simple_car/model.sdf.xmacro` with uri `file:///simple_car/model.sdf.xmacro`.
 
 **model include**
 
@@ -170,7 +170,7 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 * it will only include the content  between `<model>...<model/>` in other xacro file.
 
 ```xml
-<xacro_include_model uri="model://simple_car/model.sdf.xacro"/>
+<xacro_include_model uri="model://simple_car/model.sdf.xmacro"/>
 ```
 
 >  Tips: 
@@ -181,7 +181,7 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 >  *  Don't use same name for  xacro definition (the param `name` of  `<xacro_define_property>`  and `<xacro_define_macro>`) , otherwise the priority of xacro definition need be considered.
 >  * Be carefully when using  `<xacro_include_definition>`  and `<xacro_include_model>`
 
-### 2.5 pre-defined common.xacro
+### 2.5 pre-defined common.xmacro
 
 ```xml
 <!--macro defination:inertia-->

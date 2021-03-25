@@ -9,7 +9,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='xacro4sdf',  
-    version='1.2.4',  
+    version='1.2.5',  
     author='Zhenpeng Ge',  
     author_email='zhenpeng.ge@qq.com', 
     url='https://github.com/gezp/xacro4sdf', 

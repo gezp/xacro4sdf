@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <sdf version="1.7">
     <xacro_define_property name="rplidar_a2_h" value="0.4" />
-    <xacro_include_definition uri="file://model.sdf.xacro" />
+    <xacro_include_definition uri="file://model.sdf.xmacro" />
     <!--rplidar a2-->
     <model name='rplidar_a2'>
         <link name="link">
