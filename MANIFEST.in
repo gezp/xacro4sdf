@@ -1,1 +1,1 @@
-include xacro4sdf/common.xacro
+include xacro4sdf/common.xmacro
