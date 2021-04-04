@@ -225,7 +225,7 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 * relapce xacro (use of xacro)
   * replace xacro include model 
   * replace xacro property (`${...}`) between `<model>...<model/>` (process global variable)
-  * replace xacro macro (`<xacro_macro>`) by loop (including recursively depth <=5)
+  * replace xacro macro (`<xacro_macro>`) by loop (traverse like BFS, including depth <=5)
 
 > Tip:
 > * the definitions of dictionary
