@@ -108,7 +108,7 @@ class XMLMacro:
     def __replace_macro_node(self,node):
         parent = node.parentNode
         if not node.hasAttribute("name"):
-            print("check <xacro_macro> block,not find parameter name!")
+            print("Error: check <xacro_macro> block,not find parameter name!")
             sys.exit(1)
         name = node.getAttribute("name")
         # get xml string
@@ -209,17 +209,17 @@ class XMLMacro:
 
 def xacro4sdf_main():
     if(len(sys.argv) < 2):
-        print("usage: xacro4sdf <inputfile> (the name of inputfile must be xxx.xmacro)")
+        print("Usage: xacro4sdf <inputfile> (the name of inputfile must be xxx.xmacro)")
         return -1
     inputfile = sys.argv[1]
     outputfile = os.path.splitext(inputfile)[0]
     #check
     if os.path.splitext(inputfile)[1] != '.xmacro' and os.path.splitext(inputfile)[1] != '.xacro':
-        print("the name of inputfile must be xxx.xmacro")
+        print("Error: the name of inputfile must be xxx.xmacro")
         return -2
     #warn
     if os.path.splitext(inputfile)[1] == '.xacro':
-        print("Attention: inputfile with xxx.xmacro is recommanded to show the difference from ros/xacro")     
+        print("Warning: inputfile with xxx.xmacro is recommanded to show the difference from ros/xacro")     
     #process 
     xmacro=XMLMacro()
     xmacro.set_xml_file(inputfile)
