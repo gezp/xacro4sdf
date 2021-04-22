@@ -9,7 +9,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='xacro4sdf',  
-    version='1.2.6',  
+    version='2.0.0',  
     author='Zhenpeng Ge',  
     author_email='zhenpeng.ge@qq.com', 
     url='https://github.com/gezp/xacro4sdf', 
@@ -22,7 +22,7 @@ setup(
     packages=find_packages(),
     entry_points={ 
         'console_scripts': [
-            'xacro4sdf=xacro4sdf:main',
+            'xacro4sdf=xacro4sdf:xacro4sdf_main',
         ]
     }
 )
