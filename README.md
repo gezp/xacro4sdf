@@ -31,7 +31,7 @@ pip install xacro4sdf
 
 * refer to files in `test/`  (for example `test/model.sdf.xmacro`)
 
-**generate  model.sdf **
+**generate  model.sdf**
 
 ```bash
 #cd test
