@@ -4,13 +4,16 @@
 
 `xacro4sdf` is a simple tool to define and parse XML macro for [sdf (sdformat)](http://sdformat.org/), you can use `xacro4sdf` to write modularized SDF xml (not nest model) 
 
-* xacro4sdf is similar, but different from  [ros/xacro](https://github.com/ros/xacro) which is desiged for urdf. the function of xacro4sdf is more simple, but it's also more easy to use.
+* xacro4sdf is similar, but different from  [ros/xacro](https://github.com/ros/xacro) which is desiged for urdf. 
+* xacro4sdf is more simple, but it's also more easy to use.
 
 > Reference: [ros/xacro](https://github.com/ros/xacro)
 >
-> With Xacro, you can construct shorter and more readable XML files by using macros that expand to larger XML expressions. 
+> * With Xacro, you can construct shorter and more readable XML files by using macros that expand to larger XML expressions. 
 
-**Attention: xacro4sdf is incompatible with ros/xacro API**
+**Attention:**
+
+* `<xacro_include_model>` is departed after version2.0.0,  you can use  the tag with version1.2.6.
 
 ## 1. Usage
 
@@ -129,7 +132,7 @@ The  usage of Macros is to define `<xacro_macro>` which will be replaced with `<
 * only support simple parameters (string and number),but block parameters isn't supported.
 * it's supported to use other  `xacro_macro`  in `xacro_define_macro` which is recursive definition.
 
-> it's not recommended to define macro recursively (only support <=5 ).
+> it's not recommended to define macro recursively (only support <=5).
 
 ### 2.3. Math expressions
 
