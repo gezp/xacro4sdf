@@ -6,26 +6,13 @@ import re
 import xml.dom.minidom
 import xacro4sdf.xml_format
 
-#model paths list
-g_model_paths=[]
-if os.getenv("IGN_GAZEBO_RESOURCE_PATH") is not None:
-    g_model_paths=g_model_paths+os.getenv("IGN_GAZEBO_RESOURCE_PATH").split(":")
-if os.getenv("GAZEBO_MODEL_PATH") is not None:
-    g_model_paths=g_model_paths+os.getenv("GAZEBO_MODEL_PATH").split(":")
-if os.getenv("XACRO4SDF_MODEL_PATH") is not None:
-    g_model_paths=g_model_paths+os.getenv("XACRO4SDF_MODEL_PATH").split(":")
-
-#global vaiables
-g_property_table = {}
-l_property_table = {}
-g_macro_params_table = {}
-g_macro_node_table = {}
 
 def try2number(str):
     try:
         return float(str)
     except ValueError:
         return str
+
 
 # returh a absolute path.
 # current_dirname is needed for 'file://'
@@ -49,162 +36,193 @@ def parse_uri(uri,current_dirname):
                 break
     return result
 
-def get_xacro(root):
-    # only find in <sdf>...</sdf>
-    for node in root.childNodes:
-        if node.nodeType == xml.dom.Node.ELEMENT_NODE:
-            if node.tagName == 'xacro_define_property':
-                name = node.getAttribute("name")
-                g_property_table[name] = try2number(node.getAttribute("value"))
-            elif node.tagName == 'xacro_define_macro':
-                name = node.getAttribute("name")
-                g_macro_params_table[name] = node.getAttribute("params").split(' ')
-                g_macro_node_table[name] = node.toxml()
+class XMLMacro:
+    def __init__(self):
+        # variables for xml parse
+        self.local_property_dict={} 
+        self.global_property_dict={}
+        self.macro_params_dict={}
+        self.macro_content_dict={}
+        self.xmacro_paths=[]
+        # variables for xml info
+        self.filename=""
+        self.dirname=""
+        self.in_doc=None
+        self.out_doc=None
+        self.parse_flag=False
+        #init
+        if os.getenv("IGN_GAZEBO_RESOURCE_PATH") is not None:
+            self.xmacro_paths=self.xmacro_paths+os.getenv("IGN_GAZEBO_RESOURCE_PATH").split(":")
+        if os.getenv("GAZEBO_MODEL_PATH") is not None:
+            self.xmacro_paths=self.xmacro_paths+os.getenv("GAZEBO_MODEL_PATH").split(":")
+        if os.getenv("XACRO4SDF_MODEL_PATH") is not None:
+            self.xmacro_paths=self.xmacro_paths+os.getenv("XACRO4SDF_MODEL_PATH").split(":")
+    
+    def get_xacro(self,doc):
+        # only find in <sdf>...</sdf>
+        root = doc.documentElement
+        for node in root.childNodes:
+            if node.nodeType == xml.dom.Node.ELEMENT_NODE:
+                if node.tagName == 'xacro_define_property':
+                    name = node.getAttribute("name")
+                    self.global_property_dict[name] = try2number(node.getAttribute("value"))
+                elif node.tagName == 'xacro_define_macro':
+                    name = node.getAttribute("name")
+                    self.macro_params_dict[name] = node.getAttribute("params").split(' ')
+                    self.macro_content_dict[name] = node.toxml()
 
-def get_include_xacro_recursively(root,abs_dirname):
-    for node in root.childNodes:
-        if node.nodeType == xml.dom.Node.ELEMENT_NODE:
-            if node.tagName == 'xacro_include_definition':
-                uri = node.getAttribute("uri")
-                file_path = parse_uri(uri,abs_dirname)
-                if file_path != "":
-                    tmp_doc = xml.dom.minidom.parse(file_path)
-                    tmp_root=tmp_doc.documentElement
-                    #get xacro from child recursively
-                    get_include_xacro_recursively(tmp_root,os.path.dirname(file_path))
-                    #get xacro from file
-                    get_xacro(tmp_doc.documentElement)
-                else:
-                    print("Error: not find xacro_include_definition uri",uri)
-                    sys.exit(1)
+    def get_include_xacro_recursively(self,doc,dirname):
+        root = doc.documentElement
+        for node in root.childNodes:
+            if node.nodeType == xml.dom.Node.ELEMENT_NODE:
+                if node.tagName == 'xacro_include_definition':
+                    uri = node.getAttribute("uri")
+                    filepath = parse_uri(uri,dirname)
+                    if filepath != "":
+                        tmp_doc = xml.dom.minidom.parse(filepath)
+                        #get xacro from child recursively
+                        self.get_include_xacro_recursively(tmp_doc,os.path.dirname(filepath))
+                        #get xacro from file
+                        self.get_xacro(tmp_doc)
+                    else:
+                        print("Error: not find xacro_include_definition uri",uri)
+                        sys.exit(1)
+        
+    def remove_definition_xacro_node(self,doc):
+        root = doc.documentElement
+        for node in root.childNodes:
+            if node.nodeType == xml.dom.Node.ELEMENT_NODE:
+                if node.tagName == 'xacro_define_property' \
+                    or node.tagName == 'xacro_define_macro' \
+                    or node.tagName == 'xacro_include_definition':
+                    root.removeChild(node)
 
+    def re_eval_fn(self,obj):
+        result = eval(obj.group(1), self.global_property_dict, self.local_property_dict)
+        return str(result)
+
+    def eval_text(self,xml_str):
+        pattern = re.compile(r'[$][{](.*?)[}]', re.S)
+        return re.sub(pattern, self.re_eval_fn, xml_str)
             
-def remove_definition_xacro_node(root):
-    for node in root.childNodes:
-        if node.nodeType == xml.dom.Node.ELEMENT_NODE:
-            if node.tagName == 'xacro_define_property' or node.tagName == 'xacro_define_macro' or node.tagName == 'xacro_include_definition':
-                root.removeChild(node)
-
-
-def replace_inlcude_model_node(node,abs_dirname):
-    uri = node.getAttribute("uri")
-    path = parse_uri(uri,abs_dirname)
-    #get xacro from file
-    if path != "":
+    def replace_macro_node(self,node):
         parent = node.parentNode
-        new_doc = xml.dom.minidom.parse(path).documentElement
-        new_nodes = new_doc.getElementsByTagName("model")
-        new_node=new_nodes[0]
+        if not node.hasAttribute("name"):
+            print("check <xacro_macro> block,not find parameter name!")
+            sys.exit(1)
+        name = node.getAttribute("name")
+        # get xml string
+        xml_str = self.macro_content_dict[name]
+        # get local table
+        self.local_property_dict.clear()
+        for param in self.macro_params_dict[name]:
+            self.local_property_dict[param] = try2number(node.getAttribute(param))
+        # replace macro(insert and remove)
+        xml_str = self.eval_text(xml_str)
+        new_node = xml.dom.minidom.parseString(xml_str).documentElement
         for cc in list(new_node.childNodes):
             parent.insertBefore(cc, node)
-    else:
-        print("Error: not find xacro_include_model uri ",uri)
-        sys.exit(1)
-    parent.removeChild(node)
+        parent.removeChild(node)
 
-############################################################replace <xacro_macro>
-def re_eval_fn(obj):
-    result = eval(obj.group(1), g_property_table, l_property_table)
-    return str(result)
+##############
+    def set_xml_file(self,filepath):
+        self.filename=filepath
+        self.dirname=os.path.dirname(os.path.abspath(filepath))
+        self.in_doc = xml.dom.minidom.parse(filepath)
 
-def eval_text(xml_str):
-    pattern = re.compile(r'[$][{](.*?)[}]', re.S)
-    return re.sub(pattern, re_eval_fn, xml_str)
+    def set_xml_string(self,xml_str):
+        self.dirname=os.path.dirname(os.path.abspath(__file__))
+        self.in_doc = xml.dom.minidom.parse(xml_str)
 
-def replace_macro_node(node):
-    parent = node.parentNode
-    if not node.hasAttribute("name"):
-        print("check <xacro_macro> block,not find parameter name!")
-        sys.exit(1)
-    name = node.getAttribute("name")
-    # get xml string
-    xml_str = g_macro_node_table[name]
-    # get local table
-    l_property_table.clear()
-    for param in g_macro_params_table[name]:
-        l_property_table[param] = try2number(node.getAttribute(param))
-    # replace macro(insert and remove)
-    xml_str = eval_text(xml_str)
-    new_node = xml.dom.minidom.parseString(xml_str).documentElement
-    for cc in list(new_node.childNodes):
-        parent.insertBefore(cc, node)
-    parent.removeChild(node)
-##############################################################################
+    def parse(self):
+        ################# get xacro defination from in_doc(store macro's defination to dictionary)
+        # get common xacro (lowest priority,it can be overwrited)
+        common_xacro_path = os.path.join(os.path.dirname(os.path.abspath(__file__)) ,'common.xmacro')
+        self.get_xacro(xml.dom.minidom.parse(common_xacro_path))
+        # get inlcude xacro recursively (the priority depends on the order of tag<xacro_include_definition>)
+        self.get_include_xacro_recursively(self.in_doc,self.dirname)
+        # get current xacro (highest priority)
+        self.get_xacro(self.in_doc)
+        # remove xacro defination (<xacro_define_property>,<xacro_define_macro>,<xacro_include_definition>)
+        self.remove_definition_xacro_node(self.in_doc)
+        self.parse_flag=True
 
-#reference: https://github.com/ros/xacro/blob/noetic-devel/src/xacro/__init__.py
-def addbanner(doc,input_file_name):
-    # add xacro auto-generated banner
-    banner = [xml.dom.minidom.Comment(c) for c in
+    def generate(self):
+        if self.in_doc is None:
+            return None
+        if not self.parse_flag:
+            self.parse()
+        ################# generate out_doc by relapcing xacro macro
+        # replace global xacro property (process by string regular expression operations)
+        self.local_property_dict.clear()
+        xml_str = self.in_doc.documentElement.toxml()
+        xml_str = self.eval_text(xml_str)
+        self.out_doc = xml.dom.minidom.parseString(xml_str)
+        # replace xacro macro 
+        for _ in range(5):
+            nodes = self.out_doc.getElementsByTagName("xacro_macro")
+            if nodes.length != 0:
+                for node in list(nodes):
+                    self.replace_macro_node(node)
+            else:
+                break
+        #check
+        if self.out_doc.getElementsByTagName("xacro_macro").length != 0:
+            print("Error:The recursive depth of macro defination only support <=5")
+            sys.exit(1)
+
+    def to_string(self):
+        if self.out_doc is None:
+            return None
+        return self.out_doc.documentElement.toxml()
+
+    def to_file(self,filepath,banner_info=None):
+        if self.out_doc is None:
+            return None
+        # auto-generated banner
+        # reference: https://github.com/ros/xacro/blob/noetic-devel/src/xacro/__init__.py
+        src = "python script"
+        if self.filename != "":
+            src = self.filename 
+        if banner_info is not None:
+            src=banner_info
+        banner = [xml.dom.minidom.Comment(c) for c in
               [" %s " % ('=' * 83),
-               " |    This document was autogenerated by xacro4sdf from %-26s | " % input_file_name,
+               " |    This document was autogenerated by xacro4sdf from %-26s | " % src,
                " |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED  %-30s | " % "",
                " %s " % ('=' * 83)]]
-    first = doc.firstChild
-    for comment in banner:
-        doc.insertBefore(comment, first)
+        first = self.out_doc.firstChild
+        for comment in banner:
+            self.out_doc.insertBefore(comment, first)
+        #write to file
+        try:
+            with open(filepath, 'w', encoding='UTF-8') as f:
+                self.out_doc.writexml(f, indent='', addindent='\t', newl='\n', encoding='UTF-8')
+        except Exception as err:
+            print('to_file error:{0}'.format(err))
 
-def xacro4sdf(inputfile, outputfile):
-    inputfile_dir_path=os.path.dirname(os.path.abspath(inputfile))
-    doc = xml.dom.minidom.parse(inputfile)
-    root = doc.documentElement
-    ################# get xacro defination(store macro defination to dictionary)
-    # get common xacro (lowest priority,it can be overwrited)
-    common_xacro_path = os.path.join(os.path.dirname(os.path.abspath(__file__)) ,'common.xmacro')
-    get_xacro(xml.dom.minidom.parse(common_xacro_path).documentElement)
-    # get inlcude xacro recursively (the priority depends on the order of tag<xacro_include_definition>)
-    get_include_xacro_recursively(root,inputfile_dir_path)
-    # print(g_macro_node_table.keys())
-    # get current xacro (highest priority)
-    get_xacro(root)
-    # remove xacro defination (<xacro_define_property>,<xacro_define_macro>,<xacro_include_definition>)
-    remove_definition_xacro_node(root)
-    ################# relapce xacro
-    # replace xacro include model 
-    nodes = doc.getElementsByTagName("xacro_include_model")
-    if nodes.length != 0:
-        for node in list(nodes):
-            replace_inlcude_model_node(node,inputfile_dir_path)
-    if doc.getElementsByTagName("xacro_inlcude_model").length != 0:
-        print("Error:The nesting of xacro_include_model is not supported!")
-        sys.exit(1)
-    # replace xacro property (doc -> doc, process by string regular expression operations)
-    l_property_table.clear()
-    xml_str = root.toxml()
-    xml_str = eval_text(xml_str)
-    doc = xml.dom.minidom.parseString(xml_str)
-    # replace xacro macro
-    for _ in range(5):
-        nodes = doc.getElementsByTagName("xacro_macro")
-        if nodes.length == 0:
-            break
-        else:
-            for node in list(nodes):
-                replace_macro_node(node)
-    #check
-    if doc.getElementsByTagName("xacro_macro").length != 0:
-        print("Error:The nesting of macro defination is much deep! only support <=5")
-        sys.exit(1)
-    ################## output
-    addbanner(doc,inputfile)
-    try:
-        with open(outputfile, 'w', encoding='UTF-8') as f:
-            doc.writexml(f, indent='', addindent='\t', newl='\n', encoding='UTF-8')
-    except Exception as err:
-        print('output error:{0}'.format(err))
 
 
 def main():
-    if(len(sys.argv) >= 2):
-        inputfile = sys.argv[1]
-        outputfile = os.path.splitext(inputfile)[0]
-        if os.path.splitext(inputfile)[1] == '.xacro':
-            print("Attention: inputfile with xxx.xmacro is recommanded to show the difference from ros/xacro")
-        if os.path.splitext(inputfile)[1] == '.xmacro' or os.path.splitext(inputfile)[1] == '.xacro':
-            # run xacro4sdf
-            xacro4sdf(inputfile, outputfile)
-            return 0
-    #error
-    print("usage: xacro4sdf <inputfile> (the name of inputfile must be xxx.xmacro)")
+    if(len(sys.argv) < 2):
+        print("usage: xacro4sdf <inputfile> (the name of inputfile must be xxx.xmacro)")
+        return -1
+    inputfile = sys.argv[1]
+    outputfile = os.path.splitext(inputfile)[0]
+    #check
+    if os.path.splitext(inputfile)[1] != '.xmacro' and os.path.splitext(inputfile)[1] != '.xacro':
+        print("the name of inputfile must be xxx.xmacro")
+        return -2
+    #warn
+    if os.path.splitext(inputfile)[1] == '.xacro':
+        print("Attention: inputfile with xxx.xmacro is recommanded to show the difference from ros/xacro")     
+    #process 
+    xmacro=XMLMacro()
+    xmacro.set_xml_file(inputfile)
+    xmacro.generate()
+    xmacro.to_file(outputfile)
+    return 0
+    
 
 if __name__ == '__main__':
     main()
