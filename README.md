@@ -12,9 +12,9 @@
 
 **Attention: xacro4sdf is incompatible with ros/xacro API**
 
-## 1. Example and Usage
+## 1. Usage
 
-Install
+**Installation**
 
 ```bash
 #install by pip
@@ -24,43 +24,33 @@ pip install xacro4sdf
 # cd xacro4sdf && sudo python3 setup.py install
 ```
 
-create model.sdf.xmacro file (test/model.sdf.xmacro)
+**create model.sdf.xmacro file**
 
-```xml
-<?xml version="1.0"?>
-<sdf version="1.7">
-    <xacro_define_property name="rplidar_a2_h" value="0.2" />
-    <xacro_define_macro name = "rplidar_a2_collision_and_visual" params="prefix">
-        <collision name="${prefix}_collision">
-            <xacro_macro name="geometry_mesh" uri="model://rplidar_a2/meshes/rplidar_a2.dae"/>
-        </collision>
-        <visual name="${prefix}_visual">
-            <xacro_macro name="geometry_mesh" uri="model://rplidar_a2/meshes/rplidar_a2.dae"/>
-        </visual>
-    </xacro_define_macro>
-    <!--rplidar a2-->
-    <model name='rplidar_a2'>
-        <link name="link">
-            <inertial>
-                <pose>0 0 0.02 0 0 0</pose>
-                <xacro_macro name="inertia_box" m="0.5" x="${rplidar_a2_h}" y="${rplidar_a2_h+0.1}" z="${2*rplidar_a2_h}"/>
-            </inertial>
-            <xacro_macro name="rplidar_a2_collision_and_visual" prefix="rplidar_a2"/>
-        </link>
-    </model>
-</sdf>
-```
+* refer to files in `test/`  (for example `test/model.sdf.xmacro`)
 
-* the macro of  `inertia_box` is pre-defined in `common.xmacro` (refer to `2.5 pre-defined common.xmacro`)
-
-run
+**generate  model.sdf **
 
 ```bash
+#cd test
 xacro4sdf model.sdf.xmacro
 ```
 
 * it will generate model.sdf (the result should be same as test/model.sdf)
 * more examples can be found `test` folder.
+
+**summary of XML Tags**
+
+* definition of property and macro : core function
+  * `<xacro_define_property>` and `<xacro_define_macro>`
+* include 
+  * `<xacro_include_definition>` :include definition of property and macro from other xmacro file
+* use of property and macro:
+  * `${xxx}` : use of property ,it's very useful to use math expressions.
+  * `<xacro_macro>` : use of macro, it's very useful for modular modeling.
+
+> Tip:
+>
+> * the xacro defination (`<xacro_define_property>` , `<xacro_define_macro>` and  `<xacro_include_definition>`) must be child node of root node `<sdf>` .
 
 ## 2. Features
 
@@ -147,11 +137,11 @@ The  usage of Macros is to define `<xacro_macro>` which will be replaced with `<
 * refer to examples of  **Properties** and **Macros** 
 * it's implemented by calling `eval()` in python, so it's unsafe for some cases.
 
-### 2.4. Including other xacro files
+### 2.4. Including other xmacro files
 
 **definition include**
 
-You can include other xacro files using the `<xacro_include_definition>` tag ,include other xacro files according to param `uri`.
+You can include other xmacro files using the `<xacro_include_definition>` tag ,include other xmacro files according to param `uri`.
 
 *  it will only include the definition of properties with tag `<xacro_define_property>` and macros with tag `<xacro_define_macro>`.
 
@@ -161,23 +151,13 @@ You can include other xacro files using the `<xacro_include_definition>` tag ,in
 ```
 
 * The uri for `model` means to search file in a list of folders which are defined by  environment variable `IGN_GAZEBO_RESOURCE_PATH` and `GAZEBO_MODEL_PATH`
-* The uri for `file` means to open the file directly. it try to open the file with relative path `simple_car/model.sdf.xmacro` . you can also try to open file with absolute path `/simple_car/model.sdf.xmacro` with uri `file:///simple_car/model.sdf.xmacro`.
-
-**model include**
-
-You can include other xacro files using the `<xacro_include_model>` tag.
-
-* it will only include the content  between `<model>...<model/>` in other xacro file.
-
-```xml
-<xacro_include_model uri="model://simple_car/model.sdf.xmacro"/>
-```
+* The uri for `file` means to open the file directly.
+  *  it try to open the file with relative path `simple_car/model.sdf.xmacro` . 
+  * you can also try to open file with absolute path `/simple_car/model.sdf.xmacro` with uri `file:///simple_car/model.sdf.xmacro`.
 
 >  Tips: 
 >
 >  *   `<xacro_include_definition>`  supports  to include  recursively.  
->  *   `<xacro_include_model>`  doesn't  support  to include recursively. and `<xacro_include_definition>` should be used before using  `<xacro_include_model>`  .
->     *  it's generally used to overwrite property with  `<xacro_define_property>`  .
 >  *  Don't use same name for  xacro definition (the param `name` of  `<xacro_define_property>`  and `<xacro_define_macro>`) , otherwise the priority of xacro definition need be considered.
 >  * Be carefully when using  `<xacro_include_definition>`  and `<xacro_include_model>`
 
@@ -197,43 +177,31 @@ You can include other xacro files using the `<xacro_include_model>` tag.
 <xacro_define_macro name="visual_collision_with_mesh" params="prefix uri">
 ```
 
-* you can directly use the  macro in your xacro file.
+* you can directly use the  macro in your xmacro file.
 
-## 3. Extra explanation for xacro4sdf
+## 3. Custom usage in python
 
-**summary for xacro4sdf**
+you can use xacro4sdf  in python easily
 
-* definition of property and macro : core function
-  * `<xacro_define_property>` and `<xacro_define_macro>`
-* include 
-  * `<xacro_include_definition>` :include definition of property and macro of other xacro file,it's very useful for modular modeling.
-  * `<xacro_include_model>` :include `<model>...<model/>`content (including recursively is not supported),be carefully to use this tag.
-* use of property and macro:
-  * `${xxx}` : use of property ,it's very useful to use math expressions.
-  * `<xacro_macro>` : use of macro, it's very useful for modular modeling.
+```python
+from xacro4sdf.xacro4sdf import XMLMacro
 
-> Tip:
-> the xacro defination (`<xacro_define_property>` , `<xacro_define_macro>` and  `<xacro_include_definition>`) must be child node of root node `<sdf>` .
+xmacro=XMLMacro()
+#case1 parse from file
+xmacro.set_xml_file(inputfile)
+xmacro.generate()
+xmacro.to_file(outputfile)
 
-**Steps of xacro4sdf** 
+#case2 parse from xml string
+xmacro.set_xml_string(xml_str)
+xmacro.generate()
+xmacro.to_file(outputfile)
 
-* get xacro defination(`<xacro_define_property>`,`<xacro_define_macro>`,`<xacro_include_definition>`) , store macro defination to dictionary.
-  * get common xacro (lowest priority,it can be overwrited)
-  * get inlcude xacro recursively (the priority depends on the order of tag `<xacro_include_definition>`)
-  * get current xacro (highest priority)
-  * remove xacro defination xml (`<xacro_define_property>`,`<xacro_define_macro>`,`<xacro_include_definition>`)
-* relapce xacro (use of xacro)
-  * replace xacro include model 
-  * replace xacro property (`${...}`) between `<model>...<model/>` (process global variable)
-  * replace xacro macro (`<xacro_macro>`) by loop (traverse like BFS, including depth <=5)
-
-> Tip:
-> * the definitions of dictionary
->   * property dictionary (`<param,value>`) .
->   * macro dictionary (`<macro_name,xml_string>`, `<macro_name,params>`).
-> * process `${xxx}` in `<xacro_macro>` :  use `eval()` with global property dictionary and local property  dictionary.
->   * the params of `<xacro_define_property>` make up global property dictionary 
->   * the params of  `<xacro_macro>` make up  local property  dictionary.
+#case3 generate to string
+xmacro.set_xml_file(inputfile)
+xmacro.generate()
+xmacro.to_string()
+```
 
 ## 4. Maintainer and License 
 
