@@ -6,6 +6,7 @@
 <sdf version="1.7">
 	<!--rplidar a2-->
 	<model name="rplidar_a2">
+		<static>true</static>
 		<link name="link">
 			<inertial>
 				<pose>0 0 0.02 0 0 0</pose>
