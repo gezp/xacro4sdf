@@ -179,6 +179,28 @@ class XMLMacro:
             self.out_doc=None
             return
 
+    def set_static(self,is_static):
+        if self.out_doc is None:
+            return False
+        root=self.out_doc.documentElement
+        # model node
+        nodes=root.getElementsByTagName('model')
+        if len(nodes)==0:
+            return False
+        model=nodes[0]
+        nodes=model.getElementsByTagName('static')
+        # static node
+        static = None
+        if len(nodes)==0:
+            static=self.out_doc.createElement('static')
+            model.insertBefore(static,model.firstChild)
+            static.appendChild(self.out_doc.createTextNode('false'))
+        else:
+            static=nodes[0]
+        # set value
+        static.firstChild.data = "true" if is_static else "false"
+        return True
+
     def to_string(self):
         if self.out_doc is None:
             return None
