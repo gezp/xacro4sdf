@@ -151,7 +151,7 @@ class XMLMacro:
         self.__remove_definition_xacro_node(self.in_doc)
         self.parse_flag=True
 
-    def generate(self):
+    def generate(self,custom_property:dict=None):
         if self.in_doc is None:
             self.out_doc=None
             return
@@ -160,6 +160,8 @@ class XMLMacro:
         # generate out_doc by relapcing xacro macro
         # replace global xacro property (process by string regular expression operations)
         self.local_property_dict.clear()
+        if custom_property is not None:
+            self.local_property_dict=custom_property.copy()
         xml_str = self.in_doc.documentElement.toxml()
         xml_str = self.__eval_text(xml_str)
         self.out_doc = xml.dom.minidom.parseString(xml_str)
