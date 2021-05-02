@@ -180,7 +180,7 @@ You can include other xmacro files using the `<xacro_include_definition>` tag ,i
 <xacro_define_macro name="visual_collision_with_mesh" params="prefix uri">
 ```
 
-* you can directly use the  macro in your xmacro file.
+* you can directly use these macros in your xmacro file.
 
 ## 3. Custom usage in python
 
@@ -204,6 +204,20 @@ xmacro.to_file(outputfile)
 xmacro.set_xml_file(inputfile)
 xmacro.generate()
 xmacro.to_string()
+
+#case4 custom property
+xmacro.set_xml_file(inputfile)
+# use custom property dictionary to overwrite global property defined by <xacro_define_property> (only in 'inputfile')
+kv={"rplidar_a2_h":0.8}
+xmacro.generate(custom_property=kv)
+xmacro.to_file(outputfile)
+
+#case5 set model static
+xmacro.set_xml_file(inputfile)
+xmacro.generate()
+xmacro.set_static(True)
+xmacro.to_file(outputfile)
+
 ```
 
 ## 4. Maintainer and License 
