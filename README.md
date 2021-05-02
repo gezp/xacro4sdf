@@ -207,7 +207,8 @@ xmacro.to_string()
 
 #case4 custom property
 xmacro.set_xml_file(inputfile)
-# use custom property dictionary to overwrite global property defined by <xacro_define_property> (only in 'inputfile')
+# use custom property dictionary to overwrite global property  
+# defined by <xacro_define_property> (only in 'inputfile')
 kv={"rplidar_a2_h":0.8}
 xmacro.generate(custom_property=kv)
 xmacro.to_file(outputfile)
