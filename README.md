@@ -4,8 +4,8 @@
 
 `xacro4sdf` is a simple tool to define and parse XML macro for [sdf (sdformat)](http://sdformat.org/), you can use `xacro4sdf` to write modularized SDF xml (not nest model) 
 
-* xacro4sdf is similar, but different from  [ros/xacro](https://github.com/ros/xacro) which is desiged for urdf. 
-* xacro4sdf is more simple, but it's also more easy to use.
+* xacro4sdf is similar, but different from  [ros/xacro](https://github.com/ros/xacro) which is desiged for urdf.
+* xacro4sdf is simpler, but easier to use.
 
 > Reference: [ros/xacro](https://github.com/ros/xacro)
 >
